@@ -4,40 +4,67 @@ debug = true
 x = 0
 go = 1 -- global to initiate arrow_angle function
 step = 0
-xi = 400
-yi = 400 - 60
+
+x0 = 30
+y0 = 320
+xi = 30
 table = {}
+yi = 320
+t= 0
+power = 0
+rocket = {}
 function love.load(arg)
  background = love.graphics.newImage("asset/plain.jpg")
  arrow = love.graphics.newImage("asset/arrow.png")
+ rocket.img1 = love.graphics.newImage("asset/rocket1.png")
+ rocket.img2 = love.graphics.newImage("asset/rocket2.png")
+
 end
 
 function love.update(dt)
+
   if step == 0 then
-    if not love.keyboard.isDown('s') then
-      x = arrow_angle(x,0,math.pi/2,0.03)
+    if not love.keyboard.isDown('space') then
+      x = arrow_angle(x,0.5,math.pi/2,0.003)
+    else
+      step = 0.25
+    end
+  end
+  if step == 0.25 then
+    if not love.keyboard.isDown('c') then
+      power = power + 0.5
+      if power > 20 then
+        power = 0
+      end
     else
       step = 1
     end
   end
   --launch
   if step == 1 then
-    xi = xi + 50*dt
-    yi = yi - 5*dt + 10*dt*dt
+    t = t + dt
+    xi = (xi + power*t*math.cos(x))
+    yi = (yi - power*t*math.random(math.sin(x)-0.1,math.sin(x)+0.5) + 10*t*t)
   end
-
 end
 
 function love.draw(dt)
-  love.graphics.print(x, 400,200)
-  love.graphics.print(step, 400,210)
-  --love.graphics.draw(background,0,0)
+  love.graphics.draw(background,0,0)
+  debug_option(debug)
   if step == 0 then
-    love.graphics.circle('fill',400 ,400-arrow:getHeight(), 32, 32 )
-    love.graphics.draw(arrow,400 ,400-arrow:getHeight() ,x,1,1,arrow:getWidth()/2,arrow:getHeight())
+    --love.graphics.circle('fill',x0 ,y0 , 32, 32 )
+    love.graphics.draw(rocket.img1,x0 ,y0,x,1,1,rocket.img1:getWidth()/2,rocket.img1:getHeight())
+  end
+  if step == 0.25 then
+    --love.graphics.circle('fill',x0 ,y0 , 32, 32 )
+    love.graphics.draw(rocket.img1,x0 ,y0,x,1,1,rocket.img1:getWidth()/2,rocket.img1:getHeight())
+    love.graphics.rectangle('fill',x0 + 40, y0, 20, -power)
   end
   if step == 1 then
-  love.graphics.circle('fill', xi*math.cos(x), yi*math.sin(x), 32, 32 )
+  love.graphics.draw(arrow,x0 ,y0 ,x ,1 ,1 ,arrow:getWidth()/2 ,arrow:getHeight() )
+  love.graphics.draw(rocket.img2,xi ,yi,x,1,1,rocket.img2:getWidth()/2,rocket.img2:getHeight())
+  --love.graphics.circle('fill', xi , yi , 32, 32 )
   end
+
 
 end
