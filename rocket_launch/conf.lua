@@ -7,4 +7,5 @@ function love.conf(t)
 
 	-- For Windows debugging
 	t.console = true
+	--test tesst tsests
 end
